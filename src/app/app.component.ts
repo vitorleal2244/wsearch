@@ -18,9 +18,11 @@ import { WikipediaService } from './wikipedia.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  pages = [];
+  pages: any;
 
-  constructor(private wikipedia: WikipediaService) {}
+  constructor(private wikipedia: WikipediaService) {
+    this.pages = [{}];
+  }
 
   /**
    * Get's the searchs found
@@ -30,8 +32,8 @@ export class AppComponent {
    * @memberof AppComponent
    */
   public onTerm(term: any): void {
-    this.wikipedia.search(term).subscribe((response) => {
-      this.pages = response.query.search;
+    this.wikipedia.search(term).subscribe((pages) => {
+      this.pages = pages;
     });
   }
 }

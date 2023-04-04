@@ -1,6 +1,24 @@
+/*
+ * File: wikipedia.service.ts
+ * Project: wsearch
+ * File Created: Friday, 31st March 2023 12:35:03 pm
+ * Last Modified: Tuesday, 4th April 2023 5:30:22 pm
+ * Copyright 2023 Vitor Leal
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, pluck } from 'rxjs';
+
+interface WikipediaResponse {
+  query: {
+    search: {
+      title: string;
+      snippet: string;
+      pageid: number;
+    }[];
+  };
+}
 
 @Injectable({
   providedIn: 'root',
@@ -8,16 +26,18 @@ import { Observable } from 'rxjs';
 export class WikipediaService {
   constructor(private http: HttpClient) {}
 
-  search(term: string): Observable<any> {
-    return this.http.get('https://en.wikipedia.org/w/api.php', {
-      params: {
-        action: 'query',
-        format: 'json',
-        list: 'search',
-        utf8: '1',
-        srsearch: term,
-        origin: '*',
-      },
-    });
+  search(term: string) {
+    return this.http
+      .get<WikipediaResponse>('https://en.wikipedia.org/w/api.php', {
+        params: {
+          action: 'query',
+          format: 'json',
+          list: 'search',
+          utf8: '1',
+          srsearch: term,
+          origin: '*',
+        },
+      })
+      .pipe(pluck('query', 'search'));
   }
 }
